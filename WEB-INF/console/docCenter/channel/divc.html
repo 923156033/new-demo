@@ -1,0 +1,38 @@
+<script language="javascript">
+var ztree;
+var a;
+function purdepart(){
+	a = art.dialog({title:'部门列表:',content:$("#departtree").html(),padding:"0px 0px"});
+	ztree = $.fn.zTree.init($("#tree1"), departsetting);
+}
+
+function checkdepart(){
+	var nodes = ztree.getCheckedNodes(true);
+	var str = "";
+	for(var i=0;i<nodes.length;i++){
+		if(nodes[i].id!=null){
+		    str += "<input type='hidden' name='departIds' value='" +nodes[i].id+ "'/>";
+		}
+	}
+	$("#allids").empty().append(str);
+	a.close();
+}
+</script>
+<div id="aimgList" style="display:none">
+   <dl id="aimgList{0}" class="thumbnail">
+	<dt><div class="ver_pic"><div class="subpic"><img id="aimg{0}" src="${base}/skin/sys/img/admin/uploading.gif"/></div>
+	<div class="process" id="aimgprocess{0}"><div class="percent" id="aimgpercent{0}" style="width:0%;"></div></div>
+	</div><input type="hidden" name="imgSrc" id="aimgpath{0}"/></dt>
+	<dd class="ctrl">
+		<a href="javascript:void(0);" title="修改"><img src="${base}/skin/sys/img/admin/update.gif"/></a>
+		<a href="javascript:void(0);" id="aimgdel{0}" title="删除"><img src="${base}/skin/sys/img/admin/del.gif"/></a>
+	</dd>
+   </dl>
+</div>
+<span style="display:none"><input id="btnCancel" type="button" value="取消" onclick="swfu2.cancelQueue();" disabled="disabled" /></span>
+
+<div id="departtree" class="menuContent" style="display:none; width:260px; position:absolute; background:#fff; border:1px solid #ccc;">
+	<ul id="tree1" class="ztree" style="height:280px;width:210px;overflow-y:scroll;"></ul>
+	<input type="button" value="确定" class="l-button" onclick="checkdepart()"/>
+</div>
+</div>

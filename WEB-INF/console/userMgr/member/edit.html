@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>会员修改</title>
+<#include "../../liger.html"/>
+<script language="javascript">
+var setting = {async : {enable : true,url : "../depart/v_addtree.do",autoParam : ["parentId"]},
+		check: {enable: false}
+};
+$(function (){
+	$("#memberForm").validate({
+		errorPlacement : function(lable, element) {
+			$(element).ligerHideTip();
+            $(element).ligerTip({content:lable.html()});
+		},
+		success : function(lable,element) {
+			$(element).ligerHideTip();
+		}
+	});
+	
+	$.fn.zTree.init($("#departTree"), setting);
+	
+	<#if msg??>
+	$.ligerDialog.success('${msg}');
+	</#if>
+});
+
+function setDepart(name,id) {
+	$("#menuContent").fadeOut("fast");
+	$("#selectdepartId").val(name);
+	$("#departId").val(id);
+}
+</script>
+</head>
+
+<body>
+<div class="blk c">
+	<h2>会员管理/修改</h2>
+	<div class="c">
+    	<form method="post" action="o_update.do" id="memberForm">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="pmsTable">
+            <tr>
+              <td class="ftit"><span>*</span>用户名：</td>
+              <td><input name="username" type="text" id="username" value="${member.user.username!}" vld="{required:true,messages:{required:'用户名不能为空!'}}"/></td>
+              <td class="ftit">电子邮箱：</td>
+              <td><input name="email" type="text" id="email" value="${member.user.email!}" /></td>
+            </tr>
+            <tr>
+              <td class="ftit">会员组：</td>
+              <td>
+	              <select name="groupId" id="groupId">
+	              	<#list groupList as group>
+	              	  <option value="${group.id}" <#if member.getGroup(siteId).id==group.id>selected="selected"</#if>>${group.name!}</option>
+	                </#list>
+	              </select>
+              </td>
+              <td class="ftit"><span>*</span>所属部门：</td>
+              <td>
+				<ul class="pms-comboBox">
+				<li><input type="text" name="selectdepartId" onclick="showMenu('selectdepartId','menuContent')" id="selectdepartId" readonly="readonly" <#if depart??>value="${depart.name!}"</#if> vld="{required:true,messages:{required:'所在部门不能为空!'}}"/></li>
+			    <li class="pms-trigger" onclick="showMenu('selectdepartId','menuContent')"><div class="pms-trigger-icon"></div></li>
+				</ul>
+				<input type="hidden" name="departId" id="departId" <#if depart??>value="${depart.id!}"</#if>/>
+				<div id="menuContent" class="menuContent" style="display:none; width:180px; position:absolute; background:#fff; border:1px solid #ccc;">
+					<ul id="departTree" class="ztree" style="height:180px;width:170px;overflow-y:scroll;"></ul>
+				</div>
+              </td>
+            </tr>
+            <tr>
+              <td class="ftit">真实姓名：</td>
+              <td><input name="realName" type="text" id="realName" value="${member.user.realName!}" /></td>
+              <td class="ftit">性别：</td>
+              <td><input id="gender_0" type="radio" name="gender" value="1" <#if member.gender??&&member.gender==1>checked="checked"</#if> /><label for="gender_0">男</label>
+                  <input id="gender_1" type="radio" name="gender" value="0" <#if member.gender??&&member.gender==0>checked="checked"</#if>/><label for="gender_1">女</label>
+                  <input id="gender_2" type="radio" name="gender" value="2" <#if member.gender??&&member.gender==2>checked="checked"</#if>/><label for="gender_2">保密</label>
+                  </td>
+            </tr>
+            <tr>
+              <td class="ftit">出生日期：</td>
+              <td><input name="birthday" type="text" id="birthday" readonly="readonly" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" <#if member.birthday??>value="${member.birthday?string('yyyy-MM-dd')}"</#if>/></td>
+              <td class="ftit">所在地：</td>
+              <td><input name="address" type="text" id="address" value="${member.address!}" /></td>
+            </tr>
+            <tr>
+              <td class="ftit">固定电话：</td>
+              <td><input name="phone" type="text" id="phone" value="${member.user.phone!}" /></td>
+              <td class="ftit" width="20%">手机号码：</td>
+              <td><input name="mobile" type="text" id="mobile" value="${member.user.mobile!}" vld="{digits:true,messages:{digits:'手机号码必须为数字!'}}"/></td>
+            </tr>
+            <tr>
+              <td class="ftit">个性签名：</td>
+              <td colspan="3"><textarea cols="70" rows="5" name="signature" maxlength="255" class="l-textarea">${member.signature!}</textarea></td>
+            </tr>
+            <tr>
+              <td colspan="4" class="fctrl">
+                <@Perm perm="admin:member:update">
+                <input type="hidden" name="id" value="${member.id}"/>
+                <input type="submit" value="提交" class="l-button"/>
+                <input type="button" value="取消" class="l-button" onclick="JP.f_cancel()"/>
+                </@Perm>
+              </td>
+            </tr>
+        </table>
+        </form>
+	</div>
+</div>
+</body>
+</html>

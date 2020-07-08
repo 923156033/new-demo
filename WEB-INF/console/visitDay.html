@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Administrator's Control Panel</title>
+<#include "liger.html"/>
+<script src="${base}/skin/comm/js/jquery-1.8.3.js" type="text/javascript"></script>
+<script src="${base}/plugin/highcharts/highcharts.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function () {
+    $('#container').highcharts({
+        chart: {
+            type: 'spline'
+        },
+        title: {
+            text: '网站日访问量统计'
+        },
+        subtitle: {
+            text: '24小时制'
+        },
+        xAxis: {
+            reversed: false,
+            title: {
+                enabled: true,
+                text: '时间'
+            },
+            categories: ['0', '1', '2', '3', '4', '5','6', '7', '8', '9', '10', '11','12','13','14','15','16','17','18','19','20','21','22','23'],
+            maxPadding: 1,
+            lineWidth: 2,
+            showLastLabel: true
+        },
+        yAxis: {
+            title: {
+                text: '访问量'
+            },
+            labels: {
+                formatter: function() {
+                    return this.value + '次';
+                }
+            },
+            min:0,
+            maxPadding: 0,
+            lineWidth: 2,
+            allowDecimals: false
+        },
+        legend: {
+            enabled: false
+        },
+        tooltip: {
+            headerFormat: '<b>{series.name}</b><br/>',
+            pointFormat: '{point.x} 时: 访问{point.y}次'
+        },
+        plotOptions: {
+            spline: {
+                marker: {
+                    enable: false
+                }
+            }
+        },
+        series: [{
+            name: '访问量',
+            data: []
+        }]
+    });
+});
+
+function changedata(){
+	$.get('views/jsonDay.do',{datestr:$("#datestr").val()}, function(data){
+    	var chart = $('#container').highcharts();
+        chart.series[0].setData(data.data);
+    },"json");
+}
+
+function f_addTab(tabid,text,url){
+	self.parent.tab.addTabItem({ tabid : tabid,text: text, url: url });
+};
+</script>
+</head>
+<body style="padding:2px;overflow:hidden;">
+<div id="mainsearch">
+	<div class="searchtitle">
+		<span>查看历史日访问量</span><img src="${base}/skin/sys/img/admin/searchtool.gif" />
+		<div class="togglebtn"></div>
+	</div>
+	<div class="searchbox">
+		<ul class="sform">
+    		<li class="t">查看日期：</li>
+    		<li><input type="text" name="datestr" id="datestr" readonly="readonly" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" onchange="changedata()"/></li>
+    	</ul>
+	</div>
+</div>
+<div style="margin:5px;overflow:hidden;">
+    <div class="blk">
+        <h2>日访问量统计<a onclick="javascript:f_addTab('moreMonth','月访问统计','visitMonth.do')" href="javascript:void(0);" class="more">月统计&raquo;</a></h2>
+		<div id="container"></div>
+    </div>
+</div>
+</body>
+</html>
