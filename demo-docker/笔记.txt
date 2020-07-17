@@ -1,0 +1,1 @@
+docker  run  -id --name demo-tomcat -p 8888:8080 -v/var/tomcat/demo-tomcat:/usr/local/tomcat --privileged=true 192.168.14.18/demo/tomcat:v1
