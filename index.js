@@ -1,154 +1,96 @@
-/**
- * Created by zsq on 2016/11/13.
- */
-//调用jsonp函数请求当前所在城市
-jsonp('https://api.map.baidu.com/api?v=2.0&ak=Dv1NMU23dh1sGS9n2tUouDEYY96Dfzh3&s=1&callback=getCity');
-window.onload = function () {
-    //请求天气车数据
-    btn.addEventListener('click',function () {
-        jsonp(createUrl()[0]);
-        jsonp(createUrl()[1]);
-    });
-    text.addEventListener('keydown', function (e){
-        if (e.keyCode == 13) {
-            jsonp(createUrl()[0]);
-            jsonp(createUrl()[1]);
-        }
-    });
-}
-
-function getCity() {
-    function city(result) {
-        //去掉城市名后的"市"
-        var city = result.name.substring(0, result.name.length - 1);
-        //请求当前城市的天气数据
-        jsonp(createUrl(city)[0]);
-        jsonp(createUrl(city)[1]);
-    }
-    var cityName = new BMap.LocalCity();
-    cityName.get(city);
-}
-
-// 数据请求函数
-function jsonp(url) {
-    var script = document.createElement('script');
-    script.src = url;
-    document.body.insertBefore(script, document.body.firstChild);
-    document.body.removeChild(script);
-}
-
-//数据请求成功回调函数，用于将获取到的数据放入页面相应位置
-function getWeather(response) {
-    var oSpan = document.getElementsByClassName('info');
-    var data = response.result;
-    oSpan[0].innerHTML = data[0].citynm;
-    oSpan[1].innerHTML = data[0].days;
-    oSpan[2].innerHTML = data[0].week;
-    oSpan[3].innerHTML = data[0].weather;
-    oSpan[4].innerHTML = data[0].temperature;
-    oSpan[5].innerHTML = data[0].winp;
-    oSpan[6].innerHTML = data[0].wind;
-
-    var aDiv = document.getElementsByClassName('future_box');
-    for (var i = 0; i < aDiv.length; i++) {
-        var aSpan = aDiv[i].getElementsByClassName('future_info');
-        aSpan[0].innerHTML = data[i + 1].days;
-        aSpan[1].innerHTML = data[i + 1].week;
-        aSpan[2].innerHTML = data[i + 1].weather;
-        aSpan[3].innerHTML = data[i + 1].temperature;
-    }
-    //根据返回数据，替换不同天气图片
-    changeImg(response);
-}
-
-function getTodayWeather(response) {
-    var oSpan = document.getElementsByClassName('info');
-    var data = response.results;
-    oSpan[7].innerHTML = data[0].pm25;
-    oSpan[8].innerHTML = data[0].index[4].zs;
-    oSpan[9].innerHTML = data[0].index[1].zs;
-    oSpan[10].innerHTML = data[0].index[2].zs;
-    oSpan[11].innerHTML = data[0].index[0].zs;
-}
-
-//根据获取到的数据更改页面中相应的图片
-function changeImg(data) {
-    var firstImg = document.getElementsByTagName("img")[0];
-    var firstWeatherId = data.result[0].weatid;
-    chooseImg(firstWeatherId, firstImg);
-
-    var aImg = document.getElementById('future_container').getElementsByTagName('img');
-    for (var j = 0; j < aImg.length; j++) {
-        var weatherId = data.result[j + 1].weatid;
-        chooseImg(weatherId, aImg[j]);
-    }
-}
-
-//选择图片
-function chooseImg(id, index) {
-    switch (id) {
-        case '1':
-            index.src = 'images/weather_icon/1.png';
-            break;
-        case '2':
-            index.src = 'images/weather_icon/2.png';
-            break;
-        case '3':
-            index.src = 'images/weather_icon/3.png';
-            break;
-        case '4':
-        case '5':
-        case '6':
-        case '8':
-        case '9':
-        case '10':
-        case '11':
-        case '12':
-        case '13':
-        case '20':
-        case '22':
-        case '23':
-        case '24':
-        case '25':
-        case '26':
-            index.src = 'images/weather_icon/4.png';
-            break;
-        case '7':
-            index.src = 'images/weather_icon/6.png';
-            break;
-        case '14':
-        case '15':
-        case '16':
-        case '17':
-        case '18':
-        case '27':
-        case '28':
-        case '29':
-            index.src = 'images/weather_icon/5.png';
-            break;
-        case '19':
-        case '21':
-        case '30':
-        case '31':
-        case '32':
-        case '33':
-            index.src = 'images/weather_icon/7.png';
-            break;
-        default:
-            index.src = 'images/weather_icon/8.png';
-    }
-}
-
-//根据城市名创建请求数据及url
-function createUrl() {
-    var cityName = '';
-    if (arguments.length == 0) {
-        cityName = document.getElementById('text').value;
-    } else {
-        cityName = arguments[0];
-    }
-    var urls = [];
-    urls[0] = 'https://sapi.k780.com/?app=weather.future&appkey=10003&sign=b59bc3ef6191eb9f747dd4e83c99f2a4&format=json&jsoncallback=getWeather&weaid=' + encodeURI(cityName);
-    urls[1] = 'https://api.map.baidu.com/telematics/v3/weather?output=json&ak=FK9mkfdQsloEngodbFl4FeY3&callback=getTodayWeather&location=' + encodeURI(cityName);
-    return urls;
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<!-- 指定当前pom的版本 -->
+	<modelVersion>4.0.0</modelVersion>
+	<!-- 指定编码标识 -->
+	<properties>
+    	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	
+	<!-- 以下三项是依赖的坐标 -->
+	<!-- 主项目的标识：反写的公司地址+项目名 -->
+	<groupId>com.imooc.maven01</groupId>
+	<!-- 模块的标识：项目名+模块名 -->
+	<artifactId>maven01-model</artifactId>
+	<!-- 
+	版本号 	版本号前半部分：第一个0标识大版本号、第二个0标识分之版本号、第三个0标识小版本号
+			版本号后半部分：SNAPSHOP快照、alpha内部测试、beta公测、release稳定、GA正式发布 -->
+	<version>0.0.1-SNAPSHOT</version>
+	
+	<!-- 打包的类型，jar(默认)、war、zip、pom -->
+	<packaging></packaging>
+	<!-- 项目描述名 -->
+	<name></name>
+	<!-- 项目的地址 -->
+	<url></url>
+	<!-- 项目的描述 -->
+	<description></description>
+	<!-- 开发人员的列表 -->
+	<developers></developers>
+	<!-- 许可证信息 -->
+	<licenses></licenses>
+	<!-- 组织信息 -->
+	<organization></organization>
+	
+	<!-- 
+	依赖列表
+	1、依赖传递：a依赖于b，b又依赖于c，则a自动依赖于c，
+				若想要a只依赖于b而不依赖于c，则使用<exclusions></exclusions>消除依赖
+	2、依赖冲突：	依赖路径不同时，短路有先
+				依赖路径相同时，先声明先优先
+	3、聚合和继承：聚合使用<modules></modules>、继承使用<parent></parent> -->
+	<dependencies>
+		<!-- 依赖项：要指定依赖的坐标 -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<type></type>
+			<!-- 
+			指定依赖范围：控制依赖和三种classpath（编译、测试、运行）的关系
+			六种取值：compile：编译、测试、运行都有效（默认）
+					provided：编译、测试时有效
+					runtime：测试、运行时有效
+					test：只在测试时有效
+					system：编译、测试时有效，可移植性差
+					import：导入的范围，只使用在dependencyManagement中表示从其他的pom中导入dependecy的配置 -->
+			<score>test</score>
+			<!-- 依赖是否可选：TRUE/FALSE -->
+			<optional></optional>
+			<!-- 排除依赖传递列表 -->
+			<exclusions>
+				<!-- 排除依赖传递项 -->
+				<exclusion></exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
+	<!-- 依赖的管理：定义在父模块中，供子模块继承使用，一般不会被运行，即不被引用到实际的依赖中-->
+	<dependencyManagement>
+		<dependencies>
+			<dependency></dependency>
+		</dependencies>
+	</dependencyManagement>
+	<!-- 给构建提供支持 -->
+	<build>
+		<!-- 插件列表 -->
+		<plugins>
+			<!-- 插件项1 -->
+			<plugin>
+				<groupId></groupId>
+				<artifactId></artifactId>
+				<version></version>
+			</plugin>
+			<!-- 插件项2 -->
+			<plugin>
+				<groupId></groupId>
+				<artifactId></artifactId>
+				<version></version>
+			</plugin>
+		</plugins>
+	</build>
+	<!-- 用于子模块中对父模块的继承 -->
+	<parent></parent>
+	<!-- 用来聚合多个maven项目：可以一起编译多个模块 -->
+	<modules></modules>
+</project>
